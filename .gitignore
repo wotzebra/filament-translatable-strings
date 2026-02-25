@@ -11,3 +11,8 @@ vendor
 node_modules
 tests/lang
 .DS_Store
+
+skills-lock.json
+
+/.agents
+/.claude
