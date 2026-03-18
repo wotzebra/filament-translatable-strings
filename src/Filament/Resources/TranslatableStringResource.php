@@ -97,8 +97,7 @@ class TranslatableStringResource extends Resource
                         ->hidden()
                         ->searchable(),
 
-                    LocalesColumn::make('locales')
-                        ->attribute('value'),
+                    LocalesColumn::make('value'),
 
                 ]),
                 Panel::make([
