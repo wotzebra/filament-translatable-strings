@@ -16,6 +16,7 @@ class TranslatableStringsServiceProvider extends PackageServiceProvider
             ->setBasePath(__DIR__ . '/../')
             ->hasConfigFile()
             ->hasMigration('2022_03_20_161514_create_translatable_strings_table')
+            ->hasMigration('2026_04_09_150515_add_domain_support_to_translatable_strings_table')
             ->hasCommands(
                 ExtractAndParseTranslatableStrings::class,
                 ExportTranslationsToLang::class,
