@@ -85,7 +85,7 @@ class TranslatableStringResource extends Resource
                 Section::make(__('filament-translatable-strings::admin.domain specific'))
                     ->description(__('filament-translatable-strings::admin.domain specific description'))
                     ->visible(fn (Get $get) => self::hasDomainSupport() && ! $get('use_on_all_domains'))
-                    ->schema(fn () => self::getDomainFields())
+                    ->schema(fn (Get $get) => self::getDomainFields($get('is_html') ?? false))
                     ->columnSpanFull(),
             ]);
     }
@@ -97,7 +97,7 @@ class TranslatableStringResource extends Resource
         return $provider && is_callable($provider);
     }
 
-    protected static function getDomainFields(): array
+    protected static function getDomainFields(bool $isHtml = false): array
     {
         $domainsProvider = config('filament-translatable-strings.domains_provider');
 
@@ -114,7 +114,7 @@ class TranslatableStringResource extends Resource
         return [
             Tabs::make('domain_tabs')
                 ->tabs(
-                    collect($domains)->map(function ($label, $identifier) use ($localesProvider) {
+                    collect($domains)->map(function ($label, $identifier) use ($localesProvider, $isHtml) {
                         $locales = $localesProvider && is_callable($localesProvider)
                             ? $localesProvider($identifier)
                             : LocaleCollection::map(fn (Locale $l) => $l->locale())->toArray();
@@ -122,10 +122,18 @@ class TranslatableStringResource extends Resource
                         return Tab::make($identifier)
                             ->label($label)
                             ->schema(
-                                collect($locales)->map(fn ($locale) => TextInput::make("domain_values.{$identifier}.{$locale}")
-                                    ->label($locale)
-                                    ->placeholder(__('filament-translatable-strings::admin.leave empty for global'))
-                                )->toArray()
+                                collect($locales)->map(function ($locale) use ($identifier, $isHtml) {
+                                    $fieldName = "domain_values.{$identifier}.{$locale}";
+
+                                    if ($isHtml) {
+                                        return TiptapEditor::make($fieldName)
+                                            ->label($locale);
+                                    }
+
+                                    return TextInput::make($fieldName)
+                                        ->label($locale)
+                                        ->placeholder(__('filament-translatable-strings::admin.leave empty for global'));
+                                })->toArray()
                             );
                     })->toArray()
                 )
