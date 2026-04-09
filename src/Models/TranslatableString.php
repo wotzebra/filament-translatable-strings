@@ -17,7 +17,9 @@ use Spatie\Translatable\HasTranslations;
  * @property string $key
  * @property string $name
  * @property bool $is_html
+ * @property bool $use_on_all_domains
  * @property array $value
+ * @property array|null $domain_values
  */
 class TranslatableString extends Model
 {
@@ -27,7 +29,39 @@ class TranslatableString extends Model
 
     protected $translatable = ['value'];
 
-    protected $fillable = ['scope', 'name', 'key', 'is_html', 'value'];
+    protected $fillable = ['scope', 'name', 'key', 'is_html', 'value', 'use_on_all_domains', 'domain_values'];
+
+    protected $casts = [
+        'is_html' => 'boolean',
+        'use_on_all_domains' => 'boolean',
+        'domain_values' => 'array',
+    ];
+
+    /**
+     * Get translation for a specific locale and domain.
+     * Falls back to global value if no domain-specific override exists.
+     */
+    public function getTranslationForDomain(string $locale, ?string $domainIdentifier = null): ?string
+    {
+        // If use_on_all_domains is true or no domain specified, use global value
+        if ($this->use_on_all_domains || is_null($domainIdentifier)) {
+            return $this->getTranslation('value', $locale, false);
+        }
+
+        // Check for domain-specific override
+        $domainValues = $this->domain_values ?? [];
+
+        if (isset($domainValues[$domainIdentifier][$locale])) {
+            $value = $domainValues[$domainIdentifier][$locale];
+            // Return domain value if not empty, otherwise fallback to global
+            if (! empty($value)) {
+                return $value;
+            }
+        }
+
+        // Fallback to global value
+        return $this->getTranslation('value', $locale, false);
+    }
 
     public function scopeByOneEmptyValue(Builder $query): void
     {

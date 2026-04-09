@@ -8,7 +8,12 @@ use Codedor\TranslatableStrings\Filament\Resources\TranslatableStringResource\Pa
 use Codedor\TranslatableStrings\Models\TranslatableString;
 use Codedor\TranslatableTabs\Forms\TranslatableTabs;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -56,6 +61,12 @@ class TranslatableStringResource extends Resource
                             ->label(__('filament-translatable-strings::admin.is html'))
                             ->disabled()
                             ->dehydrated(false),
+
+                        Toggle::make('use_on_all_domains')
+                            ->label(__('filament-translatable-strings::admin.use on all domains'))
+                            ->default(true)
+                            ->live()
+                            ->visible(fn () => self::hasDomainSupport()),
                     ])
                     ->translatableFields(function (TranslatableString $record) {
                         if ($record->is_html) {
@@ -70,7 +81,56 @@ class TranslatableStringResource extends Resource
                                 ->label(__('filament-translatable-strings::admin.value')),
                         ];
                     }),
+
+                Section::make(__('filament-translatable-strings::admin.domain specific'))
+                    ->description(__('filament-translatable-strings::admin.domain specific description'))
+                    ->visible(fn (Get $get) => self::hasDomainSupport() && ! $get('use_on_all_domains'))
+                    ->schema(fn () => self::getDomainFields())
+                    ->columnSpanFull(),
             ]);
+    }
+
+    protected static function hasDomainSupport(): bool
+    {
+        $provider = config('filament-translatable-strings.domains_provider');
+
+        return $provider && is_callable($provider);
+    }
+
+    protected static function getDomainFields(): array
+    {
+        $domainsProvider = config('filament-translatable-strings.domains_provider');
+
+        if (! $domainsProvider || ! is_callable($domainsProvider)) {
+            return [
+                Placeholder::make('no_domains')
+                    ->content(__('filament-translatable-strings::admin.no domains configured')),
+            ];
+        }
+
+        $domains = $domainsProvider();
+        $localesProvider = config('filament-translatable-strings.domain_locales_provider');
+
+        return [
+            Tabs::make('domain_tabs')
+                ->tabs(
+                    collect($domains)->map(function ($label, $identifier) use ($localesProvider) {
+                        $locales = $localesProvider && is_callable($localesProvider)
+                            ? $localesProvider($identifier)
+                            : LocaleCollection::map(fn (Locale $l) => $l->locale())->toArray();
+
+                        return Tab::make($identifier)
+                            ->label($label)
+                            ->schema(
+                                collect($locales)->map(fn ($locale) => TextInput::make("domain_values.{$identifier}.{$locale}")
+                                    ->label($locale)
+                                    ->placeholder(__('filament-translatable-strings::admin.leave empty for global'))
+                                )->toArray()
+                            );
+                    })->toArray()
+                )
+                ->columnSpanFull(),
+        ];
     }
 
     public static function table(Table $table): Table
@@ -131,6 +191,13 @@ class TranslatableStringResource extends Resource
                     ->options(fn () => TranslatableString::groupedScopes()->toArray())
                     ->label(__('filament-translatable-strings::admin.scope'))
                     ->placeholder(__('filament-translatable-strings::admin.all scopes')),
+
+                TernaryFilter::make('use_on_all_domains')
+                    ->label(__('filament-translatable-strings::admin.domain filter'))
+                    ->placeholder(__('filament-translatable-strings::admin.all'))
+                    ->trueLabel(__('filament-translatable-strings::admin.global only'))
+                    ->falseLabel(__('filament-translatable-strings::admin.domain specific only'))
+                    ->visible(fn () => self::hasDomainSupport()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

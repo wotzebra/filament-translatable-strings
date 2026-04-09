@@ -23,4 +23,15 @@ return [
     'import succesful' => 'Import was succesvol',
     'something went wrong during import' => 'Er is iets misgegaan tijdens de import',
 
+    // Domain support
+    'use on all domains' => 'Gebruik op alle domeinen',
+    'domain specific' => 'Domein-specifieke vertalingen',
+    'domain specific description' => 'Overschrijf de globale vertaling voor specifieke domeinen. Laat leeg om de globale waarde te gebruiken.',
+    'leave empty for global' => 'Leeg laten voor globale waarde',
+    'no domains configured' => 'Geen domeinen geconfigureerd. Stel domains_provider in de config in.',
+    'domain filter' => 'Domein gebruik',
+    'all' => 'Alle',
+    'global only' => 'Alleen globaal',
+    'domain specific only' => 'Alleen domein-specifiek',
+
 ];

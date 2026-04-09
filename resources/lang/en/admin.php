@@ -23,4 +23,15 @@ return [
     'import succesful' => 'Import was successful',
     'something went wrong during import' => 'Something went wrong during the import',
 
+    // Domain support
+    'use on all domains' => 'Use on all domains',
+    'domain specific' => 'Domain-specific translations',
+    'domain specific description' => 'Override the global translation for specific domains. Leave empty to use the global value.',
+    'leave empty for global' => 'Leave empty to use global value',
+    'no domains configured' => 'No domains configured. Set domains_provider in config.',
+    'domain filter' => 'Domain usage',
+    'all' => 'All',
+    'global only' => 'Global only',
+    'domain specific only' => 'Domain-specific only',
+
 ];
