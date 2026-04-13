@@ -2,10 +2,13 @@
 
 namespace Wotz\TranslatableStrings\Filament\Resources;
 
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
@@ -31,12 +34,12 @@ class TranslatableStringResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'key';
 
-    public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TranslatableTabs::make()
-                    ->icon(fn (string $locale, \Filament\Schemas\Components\Utilities\Get $get) => 'heroicon-o-' . (
+                    ->icon(fn (string $locale, Get $get) => 'heroicon-o-' . (
                         empty($get("{$locale}.value")) ? 'x-circle' : 'check-circle'
                     ))
                     ->defaultFields([
@@ -131,7 +134,7 @@ class TranslatableStringResource extends Resource
                     ->placeholder(__('filament-translatable-strings::admin.all scopes')),
             ])
             ->recordActions([
-                \Filament\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->toolbarActions([])
             ->paginated([25, 50, 100]);

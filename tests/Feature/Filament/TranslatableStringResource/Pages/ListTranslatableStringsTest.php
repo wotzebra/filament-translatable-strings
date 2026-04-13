@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Maatwebsite\Excel\Excel;
 use Mockery\MockInterface;
 use Wotz\LocaleCollection\Facades\LocaleCollection;
 use Wotz\LocaleCollection\Locale;
@@ -131,7 +132,7 @@ it('has an export action', function () {
         Mockery::mock(TranslatableStringsExport::class, function (MockInterface $mock) {
             $mock->shouldReceive('download')->once()->with(
                 Str::slug(config('app.name') . '_' . today()->toDateString(), '_') . '.xlsx',
-                \Maatwebsite\Excel\Excel::XLSX
+                Excel::XLSX
             );
         })
     );
