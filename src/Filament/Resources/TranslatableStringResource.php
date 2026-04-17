@@ -22,6 +22,7 @@ use Wotz\TranslatableStrings\Filament\Resources\TranslatableStringResource\Pages
 use Wotz\TranslatableStrings\Models\Builders\TranslatableStringBuilder;
 use Wotz\TranslatableStrings\Models\TranslatableString;
 use Wotz\TranslatableTabs\Forms\TranslatableTabs;
+use Wotz\TranslatableTabs\Tables\LocalesColumn;
 
 class TranslatableStringResource extends Resource
 {
@@ -95,6 +96,9 @@ class TranslatableStringResource extends Resource
                         ->label(__('filament-translatable-strings::admin.key'))
                         ->hidden()
                         ->searchable(),
+
+                    LocalesColumn::make('value'),
+
                 ]),
                 Panel::make([
                     Stack::make([
@@ -130,6 +134,7 @@ class TranslatableStringResource extends Resource
                     ->label(__('filament-translatable-strings::admin.scope'))
                     ->placeholder(__('filament-translatable-strings::admin.all scopes')),
             ])
+            ->recordUrl(null)
             ->recordActions([
                 \Filament\Actions\EditAction::make(),
             ])
