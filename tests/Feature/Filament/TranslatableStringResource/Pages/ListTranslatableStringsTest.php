@@ -14,6 +14,7 @@ use Wotz\TranslatableStrings\Filament\Resources\TranslatableStringResource\Pages
 use Wotz\TranslatableStrings\Jobs\ExtractAndParseStrings;
 use Wotz\TranslatableStrings\Models\TranslatableString;
 use Wotz\TranslatableStrings\Tests\Fixtures\Models\User;
+use Wotz\TranslatableTabs\Tables\LocalesColumn;
 
 beforeEach(function () {
     LocaleCollection::push(new Locale('en'))
@@ -25,6 +26,10 @@ beforeEach(function () {
     ]);
 
     $this->actingAs(User::factory()->create());
+
+    LocalesColumn::configureUsing(
+        fn (LocalesColumn $column) => $column->locales(LocaleCollection::toBase()->map->locale()->toArray())
+    );
 });
 
 it('can list translatable strings', function () {
