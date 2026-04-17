@@ -125,6 +125,7 @@ class ExtractTranslatableStrings
     {
         TranslatableString::flushEventListeners();
 
+        /** @var TranslatableString $translatableString */
         $translatableString = TranslatableString::firstOrNew([
             'scope' => $scope,
             'name' => $name,
