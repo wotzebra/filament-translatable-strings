@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Maatwebsite\Excel\Excel;
 use Mockery\MockInterface;
 use Wotz\LocaleCollection\Facades\LocaleCollection;
 use Wotz\LocaleCollection\Locale;
@@ -13,6 +14,7 @@ use Wotz\TranslatableStrings\Filament\Resources\TranslatableStringResource\Pages
 use Wotz\TranslatableStrings\Jobs\ExtractAndParseStrings;
 use Wotz\TranslatableStrings\Models\TranslatableString;
 use Wotz\TranslatableStrings\Tests\Fixtures\Models\User;
+use Wotz\TranslatableTabs\Tables\LocalesColumn;
 
 beforeEach(function () {
     LocaleCollection::push(new Locale('en'))
@@ -24,6 +26,10 @@ beforeEach(function () {
     ]);
 
     $this->actingAs(User::factory()->create());
+
+    LocalesColumn::configureUsing(
+        fn (LocalesColumn $column) => $column->locales(LocaleCollection::toBase()->map->locale()->toArray())
+    );
 });
 
 it('can list translatable strings', function () {
@@ -131,7 +137,7 @@ it('has an export action', function () {
         Mockery::mock(TranslatableStringsExport::class, function (MockInterface $mock) {
             $mock->shouldReceive('download')->once()->with(
                 Str::slug(config('app.name') . '_' . today()->toDateString(), '_') . '.xlsx',
-                \Maatwebsite\Excel\Excel::XLSX
+                Excel::XLSX
             );
         })
     );

@@ -5,10 +5,12 @@ namespace Wotz\TranslatableStrings\Tests;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
+use Filament\Facades\Filament;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
+use Filament\Panel;
 use Filament\Schemas\SchemasServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
@@ -19,6 +21,7 @@ use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Spatie\Translatable\TranslatableServiceProvider;
 use Wotz\TranslatableStrings\Providers\TranslatableStringsServiceProvider;
+use Wotz\TranslatableStrings\TranslatableStringsPlugin;
 use Wotz\TranslatableTabs\Providers\TranslatableTabsServiceProvider;
 
 class TestCase extends Orchestra
@@ -59,13 +62,13 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        $panel = new \Filament\Panel;
+        $panel = new Panel;
         $panel
             ->id('resource-test')
             ->default(true)
-            ->plugin(\Wotz\TranslatableStrings\TranslatableStringsPlugin::make());
+            ->plugin(TranslatableStringsPlugin::make());
 
-        \Filament\Facades\Filament::registerPanel($panel);
+        Filament::registerPanel($panel);
     }
 
     protected function defineDatabaseMigrations(): void
