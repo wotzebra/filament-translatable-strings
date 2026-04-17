@@ -5,10 +5,6 @@ parameters:
             count: 1
             path: src/ExtractTranslatableStrings.php
         -
-            message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$value\\.$#"
-            count: 1
-            path: src/ExtractTranslatableStrings.php
-        -
             message: "#^Call to an undefined static method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:byOneEmptyValue\\(\\)\\.$#"
             count: 1
             path: src/Filament/Resources/TranslatableStringResource.php
