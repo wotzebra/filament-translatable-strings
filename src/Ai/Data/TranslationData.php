@@ -8,8 +8,7 @@ class TranslationData
         public readonly string $scope,
         public readonly string $key,
         public readonly array $values,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

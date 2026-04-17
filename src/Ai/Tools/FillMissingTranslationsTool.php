@@ -67,7 +67,6 @@ class FillMissingTranslationsTool implements Tool
             return $this->listMissing($locale, $scope);
         }
 
-
         return $this->saveAll($translations);
     }
 
