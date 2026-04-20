@@ -55,14 +55,14 @@ class SaveTranslationsTool implements Tool
             fn ($value, $locale) => $validLocales->contains($locale)
         );
 
-        $valid->each(fn ($value, $locale) => $record->setTranslation('value', $locale, $value));
-
-        $message = "Translations saved for scope \"{$scope}\", key \"{$key}\".";
-
-        if ($valid->isNotEmpty()) {
-            $record->save();
-            $message .= " Saved locales: {$valid->keys()->implode(', ')}.";
+        if ($valid->isEmpty()) {
+            return "No valid locales provided. Known locales: {$validLocales->implode(', ')}.";
         }
+
+        $valid->each(fn ($value, $locale) => $record->setTranslation('value', $locale, $value));
+        $record->save();
+
+        $message = "Saved locales [{$valid->keys()->implode(', ')}] for \"{$scope} > {$key}\".";
 
         if ($skipped->isNotEmpty()) {
             $message .= " Skipped unknown locales: {$skipped->keys()->implode(', ')}.";
