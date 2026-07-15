@@ -40,7 +40,7 @@ class TranslatableStringResource extends Resource
         return $schema
             ->components([
                 TranslatableTabs::make()
-                    ->icon(fn (string $locale, Get $get) => 'heroicon-o-' . (
+                    ->icon(fn (string $locale, Get $get) => 'heroicon-o-'.(
                         empty($get("{$locale}.value")) ? 'x-circle' : 'check-circle'
                     ))
                     ->defaultFields([
@@ -110,9 +110,9 @@ class TranslatableStringResource extends Resource
                             ->searchable(
                                 query: fn (Builder $query, string $search) => $query->where(
                                     fn ($query) => LocaleCollection::each(
-                                        fn (Locale $locale) => $query->whereRaw(
-                                            'LOWER(json_unquote(json_extract(value, \'$."' . $locale->locale() . '"\'))) LIKE ? ',
-                                            ['%' . Str::lower($search) . '%']
+                                        fn (Locale $locale) => $query->orWhereRaw(
+                                            'LOWER(json_unquote(json_extract(value, \'$."'.$locale->locale().'"\'))) LIKE ? ',
+                                            ['%'.Str::lower($search).'%']
                                         )
                                     )
                                 ),
@@ -161,8 +161,8 @@ class TranslatableStringResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::byOneEmptyValue()->count()
-            . ' '
-            . __('filament-translatable-strings::admin.empty badge');
+            .' '
+            .__('filament-translatable-strings::admin.empty badge');
     }
 
     public static function getNavigationLabel(): string

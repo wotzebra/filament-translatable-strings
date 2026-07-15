@@ -72,6 +72,27 @@ it('can filter on scope', function () {
         ->assertCanNotSeeTableRecords($this->strings->filter(fn ($string) => $string->scope !== 'd scope'));
 });
 
+it('can search on scope and name', function () {
+    Livewire::test(ListTranslatableStrings::class)
+        ->searchTable('b name')
+        ->assertCanSeeTableRecords($this->strings->filter(fn ($string) => $string->name === 'b name'))
+        ->assertCanNotSeeTableRecords($this->strings->filter(fn ($string) => $string->name !== 'b name'));
+});
+
+it('can search on a translation value present in only one locale', function () {
+    $string = createTranslatableString('x scope', 'x name', false, [
+        'en' => 'something english',
+        'nl' => 'uniek nederlands',
+    ]);
+
+    // The search term only exists in the nl value, not in en. This must still
+    // match (OR across locales), and must not match the seeded strings.
+    Livewire::test(ListTranslatableStrings::class)
+        ->searchTable('uniek nederlands')
+        ->assertCanSeeTableRecords(collect([$string]))
+        ->assertCanNotSeeTableRecords($this->strings);
+});
+
 it('has an edit action', function () {
     Livewire::test(ListTranslatableStrings::class)
         ->assertTableActionExists('edit');
@@ -99,7 +120,7 @@ it('has an import action that can throw an error', function () {
 it('has an import action that can truncate the table', function () {
     Storage::disk('local')->put(
         'import_truncate.xlsx',
-        file_get_contents(__DIR__ . '/../../../../Fixtures/import_truncate.xlsx', 'import_truncate.xlsx')
+        file_get_contents(__DIR__.'/../../../../Fixtures/import_truncate.xlsx', 'import_truncate.xlsx')
     );
 
     Livewire::test(ListTranslatableStrings::class)
@@ -136,7 +157,7 @@ it('has an export action', function () {
         TranslatableStringsExport::class,
         Mockery::mock(TranslatableStringsExport::class, function (MockInterface $mock) {
             $mock->shouldReceive('download')->once()->with(
-                Str::slug(config('app.name') . '_' . today()->toDateString(), '_') . '.xlsx',
+                Str::slug(config('app.name').'_'.today()->toDateString(), '_').'.xlsx',
                 Excel::XLSX
             );
         })
