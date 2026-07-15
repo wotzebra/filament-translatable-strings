@@ -5,13 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v2.0.1 - 2026-07-15
+## v2.1.2 - 2026-07-15
 
 ### What's Changed
 
 #### Fixed
 
 - Translatable strings table search now matches a value present in any locale instead of requiring the search term in every locale (`orWhereRaw` instead of `whereRaw`).
+
+## v2.1.1 - 2026-05-28
+
+### What's Changed
+
+* If a string is not found, skip it during import by @jyrkidn
+* Bump dependabot/fetch-metadata from 3.0.0 to 3.1.0 by @dependabot[bot] in https://github.com/codedor/filament-translatable-strings/pull/39
+
+**Full Changelog**: https://github.com/codedor/filament-translatable-strings/compare/v2.1.0...v2.1.1
+
+## v2.1.0 - 2026-04-17
+
+### What's Changed
+
+* Add `LocalesColumn` in the TranslatableString table by @jyrkidn in https://github.com/codedor/filament-translatable-strings/pull/35
+* Add PHP 8.5 / Laravel 13 support by @jyrkidn in https://github.com/codedor/filament-translatable-strings/pull/37
+* Bump ramsey/composer-install from 3 to 4 by @dependabot[bot] in https://github.com/codedor/filament-translatable-strings/pull/34
+* Bump dependabot/fetch-metadata from 2.5.0 to 3.0.0 by @dependabot[bot] in https://github.com/codedor/filament-translatable-strings/pull/38
+
+**Full Changelog**: https://github.com/codedor/filament-translatable-strings/compare/v2.0.0...v2.1.0
 
 ## v2.0.0 - 2026-01-20
 
