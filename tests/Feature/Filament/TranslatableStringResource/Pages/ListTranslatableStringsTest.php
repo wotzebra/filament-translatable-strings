@@ -120,7 +120,7 @@ it('has an import action that can throw an error', function () {
 it('has an import action that can truncate the table', function () {
     Storage::disk('local')->put(
         'import_truncate.xlsx',
-        file_get_contents(__DIR__.'/../../../../Fixtures/import_truncate.xlsx', 'import_truncate.xlsx')
+        file_get_contents(__DIR__ . '/../../../../Fixtures/import_truncate.xlsx', 'import_truncate.xlsx')
     );
 
     Livewire::test(ListTranslatableStrings::class)
@@ -157,7 +157,7 @@ it('has an export action', function () {
         TranslatableStringsExport::class,
         Mockery::mock(TranslatableStringsExport::class, function (MockInterface $mock) {
             $mock->shouldReceive('download')->once()->with(
-                Str::slug(config('app.name').'_'.today()->toDateString(), '_').'.xlsx',
+                Str::slug(config('app.name') . '_' . today()->toDateString(), '_') . '.xlsx',
                 Excel::XLSX
             );
         })
