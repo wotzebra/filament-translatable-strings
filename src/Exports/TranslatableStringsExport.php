@@ -2,12 +2,13 @@
 
 namespace Wotz\TranslatableStrings\Exports;
 
+use Maatwebsite\Excel\Concerns\Export;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Wotz\TranslatableStrings\Exports\Sheets\TranslatableStringsPerScopeSheet;
 use Wotz\TranslatableStrings\Models\TranslatableString;
 
-class TranslatableStringsExport implements WithMultipleSheets
+class TranslatableStringsExport implements Export, WithMultipleSheets
 {
     use Exportable;
 

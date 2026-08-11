@@ -16,14 +16,14 @@ class TranslatableStringScopeSheet implements ToCollection, WithHeadingRow
         private string $scope
     ) {}
 
-    public function collection(Collection $rows)
+    public function collection(Collection $collection): void
     {
-        $rows->each(function (Collection $row) {
+        $collection->each(function (Collection $row) {
             if (! $row->has('name') || $row->get('name') === '') {
                 return;
             }
 
-            /** @var TranslatableString $string */
+            /** @var TranslatableString|null $string */
             $string = TranslatableString::where('name', $row->get('name'))
                 ->where('scope', $this->scope)
                 ->first();

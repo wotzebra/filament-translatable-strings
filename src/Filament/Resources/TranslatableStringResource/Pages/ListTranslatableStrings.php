@@ -71,9 +71,10 @@ class ListTranslatableStrings extends ListRecords
 
     public function exportStrings()
     {
-        return app(TranslatableStringsExport::class)->download(
+        return Excel::download(
+            app(TranslatableStringsExport::class),
             Str::slug(config('app.name') . '_' . today()->toDateString(), '_') . '.xlsx',
-            \Maatwebsite\Excel\Excel::XLSX
+            \Maatwebsite\Excel\Excel::XLSX,
         );
     }
 
