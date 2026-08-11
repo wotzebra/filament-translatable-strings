@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Maatwebsite\Excel\Excel;
-use Mockery\MockInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Wotz\LocaleCollection\Facades\LocaleCollection;
 use Wotz\LocaleCollection\Locale;
 use Wotz\TranslatableStrings\Exports\TranslatableStringsExport;
@@ -104,10 +104,12 @@ it('has an import action that can truncate the table', function () {
 
     Livewire::test(ListTranslatableStrings::class)
         ->assertActionExists('import')
-        ->callAction('import', [
+        ->mountAction('import')
+        ->fillForm([
             'overwrite' => true,
             'file' => ['file' => 'import_truncate.xlsx'],
-        ]);
+        ])
+        ->callMountedAction();
 
     Notification::assertNotified(
         Notification::make()
@@ -132,19 +134,30 @@ it('has an import action that can truncate the table', function () {
 });
 
 it('has an export action', function () {
-    $this->instance(
-        TranslatableStringsExport::class,
-        Mockery::mock(TranslatableStringsExport::class, function (MockInterface $mock) {
-            $mock->shouldReceive('download')->once()->with(
-                Str::slug(config('app.name') . '_' . today()->toDateString(), '_') . '.xlsx',
-                Excel::XLSX
-            );
-        })
-    );
-
     Livewire::test(ListTranslatableStrings::class)
-        ->assertActionExists('export')
-        ->callAction('export');
+        ->assertActionExists('export');
+});
+
+it('exports all translatable strings', function () {
+    $expectedFilename = Str::slug(
+        config('app.name') . '_' . today()->toDateString(),
+        '_',
+    ) . '.xlsx';
+
+    Maatwebsite\Excel\Facades\Excel::shouldReceive('download')
+        ->once()
+        ->withArgs(function (
+            $export,
+            string $filename,
+            string $writerType,
+        ) use ($expectedFilename) {
+            return $export instanceof TranslatableStringsExport
+                && $filename === $expectedFilename
+                && $writerType === Excel::XLSX;
+        })
+        ->andReturn(new BinaryFileResponse(__FILE__));
+
+    app(ListTranslatableStrings::class)->exportStrings();
 });
 
 it('has an extract and parse action', function () {
